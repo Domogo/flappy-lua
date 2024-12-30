@@ -30,6 +30,8 @@ local spawnTimer = 0
 
 local lastY = -PIPE_HEIGHT + math.random(80) + 20
 
+local scrolling = true
+
 function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest")
 
@@ -57,31 +59,41 @@ function love.keypressed(key)
 end
 
 function love.update(dt)
-    backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt) % BACKGRROUND_LOOPING_POINT
-    groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH
+    if scrolling then
+        backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt) % BACKGRROUND_LOOPING_POINT
+        groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH
 
-    spawnTimer = spawnTimer + dt
+        spawnTimer = spawnTimer + dt
 
-    if spawnTimer > 2 then
-        -- modify the last Y coordinate we placed so pipe gaps aren't too far apart
-        -- no higher than 10 pixels below the top edge of the screen,
-        -- and no lower than a gap length (90 pixels) from the bottom
-        local y = math.max(-PIPE_HEIGHT + 10, math.min(lastY + math.random(-20, 20), VIRTUAL_HEIGHT - 90 - PIPE_HEIGHT))
-        lastY = y
+        if spawnTimer > 2 then
+            -- modify the last Y coordinate we placed so pipe gaps aren't too far apart
+            -- no higher than 10 pixels below the top edge of the screen,
+            -- and no lower than a gap length (90 pixels) from the bottom
+            local y = math.max(-PIPE_HEIGHT + 10,
+                math.min(lastY + math.random(-20, 20), VIRTUAL_HEIGHT - 90 - PIPE_HEIGHT))
+            lastY = y
 
-        table.insert(pipePairs, PipePair(y))
-        spawnTimer = 0
-    end
+            table.insert(pipePairs, PipePair(y))
+            spawnTimer = 0
+        end
 
-    bird:update(dt)
+        bird:update(dt)
 
-    for k, pair in pairs(pipePairs) do
-        pair:update(dt)
-    end
+        for k, pair in pairs(pipePairs) do
+            pair:update(dt)
 
-    for k, pair in pairs(pipePairs) do
-        if pair.remove then
-            table.remove(pipePairs, k)
+            for l, pipe in pairs(pair.pipes) do
+                if bird:collides(pipe) then
+                    -- pause the game to show collision
+                    scrolling = false
+                end
+            end
+        end
+
+        for k, pair in pairs(pipePairs) do
+            if pair.remove then
+                table.remove(pipePairs, k)
+            end
         end
     end
 
