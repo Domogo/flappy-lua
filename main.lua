@@ -1,4 +1,5 @@
 push = require "push"
+Class = require "class"
 
 MAXIMUM_WIDTH = 1280
 MAXIMUM_HEIGHT = 720
