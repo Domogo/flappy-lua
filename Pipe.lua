@@ -1,9 +1,8 @@
 Pipe = Class {}
 
-local PIPE_IMAGE = love.graphics.newImage("pipe.png")
+local PIPE_IMAGE = love.graphics.newImage('pipe.png')
 
--- same as ground
-PIPE_SCROLL = -60
+PIPE_SPEED = 60
 
 PIPE_HEIGHT = 288
 PIPE_WIDTH = 70
@@ -19,6 +18,7 @@ function Pipe:init(orientation, y)
 end
 
 function Pipe:update(dt)
+
 end
 
 function Pipe:render()

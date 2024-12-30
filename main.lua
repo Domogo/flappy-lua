@@ -70,7 +70,6 @@ function love.update(dt)
         lastY = y
 
         table.insert(pipePairs, PipePair(y))
-        print('added new pipe pair!')
         spawnTimer = 0
     end
 
